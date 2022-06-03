@@ -19,4 +19,20 @@ class TrainDataset(BaseDataset):
         self.A_paths = opt.imglist_A
         self.B_paths = opt.imglist_B
 
-        self.A_size = len(self
+        self.A_size = len(self.A_paths)
+        self.B_size = len(self.B_paths)
+
+        if not self.opt.isTrain:
+            self.skipcrop = True
+            self.skiprotate = True
+        else:
+            self.skipcrop = False
+            self.skiprotate = False
+
+        if self.skipcrop:
+            osize = [opt.fineSize, opt.fineSize]
+        else:
+            osize = [opt.loadSize, opt.loadSize]
+
+        if self.skiprotate:
+            
