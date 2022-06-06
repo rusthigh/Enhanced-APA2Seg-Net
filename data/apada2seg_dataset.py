@@ -35,4 +35,14 @@ class TrainDataset(BaseDataset):
             osize = [opt.loadSize, opt.loadSize]
 
         if self.skiprotate:
-            
+            angle = 0
+        else:
+            angle = opt.angle
+
+        transform_list = []
+        transform_list.append(random_pair.randomrotate_pair(angle))    # scale the image
+        self.transforms_rotate = transforms.Compose(transform_list)
+
+        transform_list = []
+        transform_list.append(transforms.Scale(osize, Image.BICUBIC))    # scale the image
+        self.transforms_scale = transforms.Compose(t
