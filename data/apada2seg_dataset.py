@@ -64,4 +64,12 @@ class TrainDataset(BaseDataset):
         self.transforms_normalize = transforms.Compose(transform_list)
 
     def __getitem__(self, index):
-     
+        index_A = index % self.A_size
+        A_path = os.path.join(self.dir_A, self.A_paths[index_A])
+        Seg_path = os.path.join(self.dir_A, self.A_paths[index_A])
+        Seg_path = Seg_path.replace('.png', '_mask.png')
+
+        index_B = random.randint(0, self.B_size - 1)
+        B_path = os.path.join(self.dir_B, self.B_paths[index_B])
+
+        A_img = 
