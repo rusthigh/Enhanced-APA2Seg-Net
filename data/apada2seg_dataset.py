@@ -72,4 +72,13 @@ class TrainDataset(BaseDataset):
         index_B = random.randint(0, self.B_size - 1)
         B_path = os.path.join(self.dir_B, self.B_paths[index_B])
 
-        A_img = 
+        A_img = Image.open(A_path).convert('L')
+        Seg_img = Image.open(Seg_path).convert('I')
+        B_img = Image.open(B_path).convert('L')
+
+        A_img = self.transforms_scale(A_img)
+        B_img = self.transforms_scale(B_img)
+        Seg_img = self.transforms_seg_scale(Seg_img)
+
+        if not self.skiprotate:
+            [A_img, Seg_img] = self.transforms_rotate([
