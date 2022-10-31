@@ -81,4 +81,15 @@ class TrainDataset(BaseDataset):
         Seg_img = self.transforms_seg_scale(Seg_img)
 
         if not self.skiprotate:
-            [A_img, Seg_img] = self.transforms_rotate([
+            [A_img, Seg_img] = self.transforms_rotate([A_img, Seg_img])
+            [B_img] = self.transforms_rotate([B_img])
+
+        if not self.skipcrop:
+            [A_img, Seg_img] = self.transforms_crop([A_img, Seg_img])
+            [B_img] = self.transforms_crop([B_img])
+
+        A_img = self.transforms_toTensor(A_img)
+        B_img = self.transforms_toTensor(B_img)
+        Seg_img = self.transforms_toTensor(Seg_img)
+
+        A_img = self.
