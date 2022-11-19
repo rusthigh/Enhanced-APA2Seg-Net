@@ -104,4 +104,8 @@ class TrainDataset(BaseDataset):
         return {'A': A_img, 'B': B_img, 'Seg': Seg_imgs, 'Seg_one': Seg_img,
                 'A_paths': A_path, 'B_paths': B_path, 'Seg_paths': Seg_path}
 
-    def
+    def __len__(self):
+        return max(self.A_size, self.B_size)
+
+    def name(self):
+        return 'UnalignedDataset'
