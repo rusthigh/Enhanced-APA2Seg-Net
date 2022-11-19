@@ -24,4 +24,17 @@ class TestDataset(BaseDataset):
             self.skiprotate = False
 
         if self.skipcrop:
-            osize = [opt.fineSize, opt.fineS
+            osize = [opt.fineSize, opt.fineSize]
+        else:
+            osize = [opt.loadSize, opt.loadSize]
+
+        if self.skiprotate:
+            angle = 0
+        else:
+            angle = opt.angle
+
+        transform_list = []
+        transform_list.append(random_pair.randomrotate_pair(angle))    # scale the image
+        self.transforms_rotate = transforms.Compose(transform_list)
+
+        transform_list 
