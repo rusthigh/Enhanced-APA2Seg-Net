@@ -92,4 +92,16 @@ class TrainDataset(BaseDataset):
         B_img = self.transforms_toTensor(B_img)
         Seg_img = self.transforms_toTensor(Seg_img)
 
-        A_img = self.
+        A_img = self.transforms_normalize(A_img)
+        B_img = self.transforms_normalize(B_img)
+
+        Seg_img[Seg_img > 0] = 1
+
+        Seg_imgs = torch.Tensor(self.opt.output_nc_seg, self.opt.fineSize, self.opt.fineSize)
+        Seg_imgs[0, :, :] = Seg_img == 0
+        Seg_imgs[1, :, :] = Seg_img == 1
+
+        return {'A': A_img, 'B': B_img, 'Seg': Seg_imgs, 'Seg_one': Seg_img,
+                'A_paths': A_path, 'B_paths': B_path, 'Seg_paths': Seg_path}
+
+    def
