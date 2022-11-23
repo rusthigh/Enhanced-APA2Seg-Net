@@ -46,4 +46,13 @@ class TestDataset(BaseDataset):
         self.transforms_seg_scale = transforms.Compose(transform_list)
 
         transform_list = []
-        transform_list.a
+        transform_list.append(random_pair.randomcrop_pair(opt.fineSize))    # random crop image & segmentation
+        self.transforms_crop = transforms.Compose(transform_list)
+
+        transform_list = []
+        transform_list.append(transforms.ToTensor())
+        self.transforms_toTensor = transforms.Compose(transform_list)
+
+        transform_list = []
+        transform_list.append(transforms.Normalize([0.5], [0.5]))
+        
