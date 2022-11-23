@@ -72,4 +72,15 @@ class TestDataset(BaseDataset):
         Seg_img = self.transforms_toTensor(Seg_img)
         Seg_img[Seg_img > 0] = 1
 
-        Seg_imgs = torch.Tensor(self.opt.output_nc_seg, self.opt.fineSize, self.opt.fineSi
+        Seg_imgs = torch.Tensor(self.opt.output_nc_seg, self.opt.fineSize, self.opt.fineSize)
+        Seg_imgs[0, :, :] = Seg_img == 0
+        Seg_imgs[1, :, :] = Seg_img == 1
+
+        return {'B': B_img, 'Seg': Seg_imgs,
+                'B_paths': B_path, 'Seg_paths': Seg_path}
+
+    def __len__(self):
+        return self.B_size
+
+    def name(self):
+        return 'TestCTDataset'
