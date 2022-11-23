@@ -63,4 +63,13 @@ class TestDataset(BaseDataset):
         B_img = Image.open(B_path).convert('L')
         B_img = self.transforms_scale(B_img)
         B_img = self.transforms_toTensor(B_img)
-        B_img = self.transforms_normalize(B_im
+        B_img = self.transforms_normalize(B_img)
+
+        Seg_filename = self.B_filenames[index % self.B_size]
+        Seg_path = os.path.join(self.dir_B, Seg_filename)
+        Seg_path = Seg_path.replace('.png', '_mask.png')
+        Seg_img = Image.open(Seg_path).convert('I')
+        Seg_img = self.transforms_toTensor(Seg_img)
+        Seg_img[Seg_img > 0] = 1
+
+        Seg_imgs = torch.Tensor(self.opt.output_nc_seg, self.opt.fineSize, self.opt.fineSi
