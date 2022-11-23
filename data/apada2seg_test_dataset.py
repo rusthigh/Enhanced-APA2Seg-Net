@@ -55,4 +55,12 @@ class TestDataset(BaseDataset):
 
         transform_list = []
         transform_list.append(transforms.Normalize([0.5], [0.5]))
-        
+        self.transforms_normalize = transforms.Compose(transform_list)
+
+    def __getitem__(self, index):
+        B_filename = self.B_filenames[index % self.B_size]
+        B_path = os.path.join(self.dir_B, B_filename)
+        B_img = Image.open(B_path).convert('L')
+        B_img = self.transforms_scale(B_img)
+        B_img = self.transforms_toTensor(B_img)
+        B_img = self.transforms_normalize(B_im
