@@ -26,4 +26,20 @@ def make_dataset(dir):
     assert os.path.isdir(dir), '%s is not a valid directory' % dir
 
     for root, _, fnames in sorted(os.walk(dir)):
-        for fnam
+        for fname in fnames:
+            if is_image_file(fname):
+                path = os.path.join(root, fname)
+                images.append(path)
+
+    return images
+
+
+def default_loader(path):
+    return Image.open(path).convert('RGB')
+
+
+class ImageFolder(data.Dataset):
+
+    def __init__(self, root, transform=None, return_paths=False,
+                 loader=default_loader):
+        imgs = make_
