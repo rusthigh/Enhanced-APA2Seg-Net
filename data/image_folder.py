@@ -55,4 +55,14 @@ class ImageFolder(data.Dataset):
         self.loader = loader
 
     def __getitem__(self, index):
-   
+        path = self.imgs[index]
+        img = self.loader(path)
+        if self.transform is not None:
+            img = self.transform(img)
+        if self.return_paths:
+            return img, path
+        else:
+            return img
+
+    def __len__(self):
+        return len(self.imgs)
