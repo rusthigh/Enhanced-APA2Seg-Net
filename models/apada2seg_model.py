@@ -345,3 +345,208 @@ class APADA2SEGModel(BaseModel):
         lambda_cc = self.opt.lambda_cc
         lambda_mind = self.opt.lambda_mind
         lambda_A = self.opt.lambda_A
+        lambda_B = self.opt.lambda_B
+
+        # Identity loss
+        if lambda_idt > 0:
+            self.idt_A = self.netG_A.forward(self.real_B)
+            self.idt_B = self.netG_B.forward(self.real_A)
+
+        if lambda_idt > 0:
+            # G_A should be identity if real_B is fed.
+            self.loss_idt_A = self.criterionIdt(self.idt_A, self.real_B) * lambda_B * lambda_idt
+            # G_B should be identity if real_A is fed.
+            self.loss_idt_B = self.criterionIdt(self.idt_B, self.real_A) * lambda_A * lambda_idt
+        else:
+            self.loss_idt_A = 0
+            self.loss_idt_B = 0
+
+        # CC loss / MIND loss
+        if lambda_cc > 0 or lambda_mind > 0:
+            self.ant_A = self.netG_A.forward(self.real_A)
+            self.ant_B = self.netG_B.forward(self.real_B)
+
+        if lambda_cc > 0:
+            self.loss_cc_A = Cor_CoeLoss(self.ant_A, self.real_A) * lambda_B * lambda_cc
+            self.loss_cc_B = Cor_CoeLoss(self.ant_B, self.real_B) * lambda_A * lambda_cc
+        else:
+            self.loss_cc_A = 0
+            self.loss_cc_B = 0
+
+        if lambda_mind > 0:
+            self.loss_mind_A = self.criterionMIND(self.ant_A, self.real_A) * lambda_B * lambda_mind
+            self.loss_mind_B = self.criterionMIND(self.ant_B, self.real_B) * lambda_A * lambda_mind
+        else:
+            self.loss_mind_A = 0
+            self.loss_mind_B = 0
+
+        # GAN loss
+        # D_A(G_A(A))
+        self.fake_B = self.netG_A.forward(self.real_A)
+        pred_fake = self.netD_A.forward(self.fake_B)
+        self.loss_G_A = self.criterionGAN(pred_fake, True)
+        # D_B(G_B(B))
+        self.fake_A = self.netG_B.forward(self.real_B)
+        pred_fake = self.netD_B.forward(self.fake_A)
+        self.loss_G_B = self.criterionGAN(pred_fake, True)
+        # Forward cycle loss
+        self.rec_A = self.netG_B.forward(self.fake_B)
+        self.loss_cycle_A = self.criterionCycle(self.rec_A, self.real_A) * lambda_A
+        # Backward cycle loss
+        self.rec_B = self.netG_A.forward(self.fake_A)
+        self.loss_cycle_B = self.criterionCycle(self.rec_B, self.real_B) * lambda_B
+        # Segmentation loss
+        self.seg_fake_B = self.netS_B.forward(self.fake_B)
+        if self.opt.seg_norm == 'DiceNorm':
+            self.loss_seg = dice_loss_norm(self.seg_fake_B, self.real_Seg)
+            self.loss_seg = self.loss_seg
+        elif self.opt.seg_norm == 'CrossEntropy':
+            arr = np.array(self.opt.crossentropy_weight)
+            weight = torch.from_numpy(arr).cuda().float()
+            self.loss_seg = cross_entropy2d(self.seg_fake_B, self.real_Seg_one, weight=weight)
+
+        # combined loss
+        self.loss_G = self.loss_G_A + self.loss_G_B + \
+                      self.loss_cycle_A + self.loss_cycle_B + \
+                      self.loss_idt_A + self.loss_idt_B + \
+                      self.loss_cc_A + self.loss_cc_B + \
+                      self.loss_mind_A + self.loss_mind_B + \
+                      self.loss_seg
+        self.loss_G.backward()
+
+    def optimize_parameters(self):
+        # forward
+        self.forward()
+
+        # G_A and G_B
+        self.optimizer_G.zero_grad()
+        self.backward_G()
+        self.optimizer_G.step()
+        # D_A
+        self.optimizer_D_A.zero_grad()
+        self.backward_D_A()
+        self.optimizer_D_A.step()
+        # D_B
+        self.optimizer_D_B.zero_grad()
+        self.backward_D_B()
+        self.optimizer_D_B.step()
+
+    def get_current_errors(self):
+        D_A = self.loss_D_A.item()
+        G_A = self.loss_G_A.item()
+        Cyc_A = self.loss_cycle_A.item()
+        D_B = self.loss_D_B.item()
+        G_B = self.loss_G_B.item()
+        Cyc_B = self.loss_cycle_B.item()
+        Seg_B = self.loss_seg.item()
+
+        if self.opt.lambda_idt > 0.0:
+            idt_A = self.loss_idt_A.item()
+            idt_B = self.loss_idt_B.item()
+        else:
+            idt_A = self.loss_idt_A
+            idt_B = self.loss_idt_B
+
+        if self.opt.lambda_cc > 0.0:
+            cc_A = self.loss_cc_A.item()
+            cc_B = self.loss_cc_B.item()
+        else:
+            cc_A = self.loss_cc_A
+            cc_B = self.loss_cc_B
+
+        if self.opt.lambda_mind > 0.0:
+            mind_A = self.loss_mind_A.item()
+            mind_B = self.loss_mind_B.item()
+        else:
+            mind_A = self.loss_mind_A
+            mind_B = self.loss_mind_B
+
+        return OrderedDict([('D_A', D_A), ('G_A', G_A), ('Cyc_A', Cyc_A), ('idt_A', idt_A), ('cc_A', cc_A), ('mind_A', mind_A),
+                            ('D_B', D_B), ('G_B', G_B), ('Cyc_B', Cyc_B), ('idt_B', idt_B), ('cc_B', cc_B), ('mind_B', mind_B),
+                            ('Seg', Seg_B)])
+
+    def get_current_visuals(self):
+        real_A = util.tensor2im(self.real_A.data)
+        fake_B = util.tensor2im(self.fake_B.data)
+        seg_B = util.tensor2seg(torch.max(self.seg_fake_B.data, dim=1, keepdim=True)[1])
+        manual_B = util.tensor2seg(torch.max(self.real_Seg.data, dim=1, keepdim=True)[1])
+        rec_A = util.tensor2im(self.rec_A.data)
+        real_B = util.tensor2im(self.real_B.data)
+        fake_A = util.tensor2im(self.fake_A.data)
+        rec_B = util.tensor2im(self.rec_B.data)
+        if self.opt.lambda_idt > 0.0 or self.opt.lambda_cc > 0.0 or self.opt.lambda_mind > 0:
+            idt_A = util.tensor2im(self.idt_A.data)
+            idt_B = util.tensor2im(self.idt_B.data)
+            return OrderedDict([('real_A', real_A), ('fake_B', fake_B), ('rec_A', rec_A), ('idt_B', idt_B),
+                                ('seg_B', seg_B), ('manual_B', manual_B),
+                                ('real_B', real_B), ('fake_A', fake_A), ('rec_B', rec_B), ('idt_A', idt_A)])
+        else:
+            return OrderedDict([('real_A', real_A), ('fake_B', fake_B), ('rec_A', rec_A),
+                                ('seg_B', seg_B), ('manual_B', manual_B),
+                                ('real_B', real_B), ('fake_A', fake_A), ('rec_B', rec_B)])
+
+    def save(self, label):
+        self.save_network(self.netG_A, 'G_A', label, self.gpu_ids)
+        self.save_network(self.netD_A, 'D_A', label, self.gpu_ids)
+        self.save_network(self.netG_B, 'G_B', label, self.gpu_ids)
+        self.save_network(self.netD_B, 'D_B', label, self.gpu_ids)
+        self.save_network(self.netS_B, 'S_B', label, self.gpu_ids)
+
+    def update_learning_rate(self):
+        lrd = self.opt.lr / self.opt.niter_decay
+        lr = self.old_lr - lrd
+        for param_group in self.optimizer_D_A.param_groups:
+            param_group['lr'] = lr
+        for param_group in self.optimizer_D_B.param_groups:
+            param_group['lr'] = lr
+        for param_group in self.optimizer_G.param_groups:
+            param_group['lr'] = lr
+
+        print('update learning rate: %f -> %f' % (self.old_lr, lr))
+        self.old_lr = lr
+
+
+'''
+Test
+Anatomy-Preserving Adaptation to Segmentation Model
+'''
+class APADA2SEGModel_TEST(BaseModel):
+    def name(self):
+        return 'APADA2SEGModel_TEST'
+
+    def initialize(self, opt):
+        assert(not opt.isTrain)
+        BaseModel.initialize(self, opt)
+        self.input_B = self.Tensor(opt.batchSize, opt.input_nc, opt.fineSize, opt.fineSize)
+
+        self.netS_B = networks.define_S(opt.input_nc_seg, opt.output_nc_seg,
+                                        opt.ngf, opt.which_model_netS, opt.norm, not opt.no_dropout, self.gpu_ids)
+
+        which_epoch_S = opt.which_epoch_S
+        self.load_network(self.netS_B, 'S_B', which_epoch_S)
+
+        print('---------- Networks initialized -------------')
+        networks.print_network(self.netS_B)
+        print('-----------------------------------------------')
+
+    def set_input(self, input):
+        # we need to use single_dataset mode
+        input_B = input['B']
+        self.input_B.resize_(input_B.size()).copy_(input_B)
+        self.image_paths = input['B_paths']
+        self.input_B_seg = input['Seg']
+
+    def test(self):
+        self.real_B = Variable(self.input_B)
+        self.real_B_seg = self.netS_B.forward(self.real_B)
+        self.gt_real_B_seg = self.input_B_seg
+
+    # get image paths
+    def get_image_paths(self):
+        return self.image_paths
+
+    def get_current_visuals(self):
+        real_B = util.tensor2im(self.real_B.data)
+        real_B_seg = util.tensor2seg(torch.max(self.real_B_seg.data, dim=1, keepdim=True)[1])
+        gt_real_B_seg = util.tensor2seg(torch.max(self.gt_real_B_seg.data, dim=1, keepdim=True)[1])
+        return OrderedDict([('real_B', real_B), ('real_B_seg', real_B_seg), ('gt_real_B_seg', gt_real_B_seg)])
