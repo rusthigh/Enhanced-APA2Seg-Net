@@ -26,4 +26,18 @@ class BaseModel():
     def get_image_paths(self):
         pass
 
-    
+    def optimize_parameters(self):
+        pass
+
+    def get_current_visuals(self):
+        return self.input
+
+    def get_current_errors(self):
+        return {}
+
+    def save(self, label):
+        pass
+
+    # helper saving function that can be used by subclasses
+    def save_network(self, network, network_label, epoch_label, gpu_ids):
+        save_filename = '%s_net_%s.pth' % (epoch_label, n
