@@ -48,4 +48,9 @@ class BaseModel():
 
     # helper loading function that can be used by subclasses
     def load_network(self, network, network_label, epoch_label):
-        save_filename = '%s_net
+        save_filename = '%s_net_%s.pth' % (epoch_label, network_label)
+        save_path = os.path.join(self.save_dir, save_filename)
+        network.load_state_dict(torch.load(save_path))
+
+    def update_learning_rate():
+        pass
