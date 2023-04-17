@@ -16,4 +16,5 @@ def create_model(opt):
         raise ValueError("Model [%s] not recognized." % opt.model)
 
     model.initialize(opt)
-    print("model [%s] was created" % (model.name(
+    print("model [%s] was created" % (model.name()))
+    return model
