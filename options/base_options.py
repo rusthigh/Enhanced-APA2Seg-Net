@@ -23,4 +23,8 @@ class BaseOptions():
         self.parser.add_argument('--input_nc', type=int, default=1, help='# of input image channels')
         self.parser.add_argument('--output_nc', type=int, default=1, help='# of output image channels')
         self.parser.add_argument('--input_nc_seg', type=int, default=1, help='# of input image channels for segmentation')
-        self.parser.add_argument('--output_nc_seg', type=int, default=
+        self.parser.add_argument('--output_nc_seg', type=int, default=2, help='# of output image channels for segmentation')
+        self.parser.add_argument('--seg_norm', type=str, default='DiceNorm', help='DiceNorm or CrossEntropy')
+        self.parser.add_argument('--ngf', type=int, default=64, help='# of gen filters in first conv layer')
+        self.parser.add_argument('--ndf', type=int, default=64, help='# of discrim filters in first conv layer')
+        s
