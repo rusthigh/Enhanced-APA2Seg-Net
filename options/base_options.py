@@ -16,4 +16,8 @@ class BaseOptions():
         self.parser.add_argument('--sub_list_A', type=str, default='./preprocess/MRI_SEG/PROC/train_DCT.txt', help='list file for domain A')
         self.parser.add_argument('--sub_list_B', type=str, default='./preprocess/MRI_SEG/PROC/train_MRI.txt', help='list file for domain B')
 
-        self.parser.add_argument('--batchSize', t
+        self.parser.add_argument('--batchSize', type=int, default=2, help='input batch size')
+        self.parser.add_argument('--angle', type=int, default=10, help='random rotation angle [-angle angle]')
+        self.parser.add_argument('--loadSize', type=int, default=286, help='scale images to this size')
+        self.parser.add_argument('--fineSize', type=int, default=256, help='then crop to this size')
+        sel
