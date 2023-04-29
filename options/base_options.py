@@ -20,4 +20,7 @@ class BaseOptions():
         self.parser.add_argument('--angle', type=int, default=10, help='random rotation angle [-angle angle]')
         self.parser.add_argument('--loadSize', type=int, default=286, help='scale images to this size')
         self.parser.add_argument('--fineSize', type=int, default=256, help='then crop to this size')
-        sel
+        self.parser.add_argument('--input_nc', type=int, default=1, help='# of input image channels')
+        self.parser.add_argument('--output_nc', type=int, default=1, help='# of output image channels')
+        self.parser.add_argument('--input_nc_seg', type=int, default=1, help='# of input image channels for segmentation')
+        self.parser.add_argument('--output_nc_seg', type=int, default=
