@@ -27,4 +27,6 @@ class BaseOptions():
         self.parser.add_argument('--seg_norm', type=str, default='DiceNorm', help='DiceNorm or CrossEntropy')
         self.parser.add_argument('--ngf', type=int, default=64, help='# of gen filters in first conv layer')
         self.parser.add_argument('--ndf', type=int, default=64, help='# of discrim filters in first conv layer')
-        s
+        self.parser.add_argument('--which_model_netD', type=str, default='basic', help='selects model to use for netD')
+        self.parser.add_argument('--which_model_netG', type=str, default='resnet_9blocks', help='selects model to use for netG: resnet_9blocks/resnet_6blocks/unet/duseunet')
+        self.parser.add_argument('--which_model_netS', type=str, default='duseunet', help='selects mode
