@@ -34,4 +34,8 @@ class BaseOptions():
         self.parser.add_argument('--gpu_ids', type=str, default='0', help='gpu ids: e.g. 0  0,1,2, 0,2. use -1 for CPU')
         self.parser.add_argument('--name', type=str, default='experiment_name', help='name of the experiment. It decides where to store samples and models')
         self.parser.add_argument('--dataset_mode', type=str, default='apada2seg_train', help='chooses how datasets are loaded. [unaligned | aligned | single | apada2seg]')
-        self.parser.add_argument('--model', type=str, default='apada2seg_model_train', help='chooses which model to use. cycle
+        self.parser.add_argument('--model', type=str, default='apada2seg_model_train', help='chooses which model to use. cycle_gan, pix2pix, test')
+        self.parser.add_argument('--which_direction', type=str, default='AtoB', help='AtoB or BtoA')
+        self.parser.add_argument('--nThreads', default=2, type=int, help='# threads for loading data')
+        self.parser.add_argument('--checkpoints_dir', type=str, default='./Checkpoints/', help='models are saved here')
+        self.parser.add_argument('-
