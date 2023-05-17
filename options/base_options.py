@@ -44,4 +44,6 @@ class BaseOptions():
         self.parser.add_argument('--display_id', type=int, default=0, help='window id of the web display')
         self.parser.add_argument('--display_port', type=int, default=8097, help='visdom port of the web display')
         self.parser.add_argument('--display_single_pane_ncols', type=int, default=0, help='if positive, display all images in a single visdom web panel with certain number of images per row.')
-        self.parse
+        self.parser.add_argument('--no_dropout', action='store_true', help='no dropout for the generator')
+        self.parser.add_argument('--max_dataset_size', type=int, default=float("inf"), help='Maximum number of samples allowed per dataset. If the dataset directory contains more than max_dataset_size, only a subset is loaded.')
+        self.parser.add_argument('--resize_or_crop', type=str, defau
