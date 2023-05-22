@@ -53,3 +53,14 @@ class BaseOptions():
 
         self.parser.add_argument('--test_B_dir', type=str, default='./preprocess/MRI_SEG/PROC/MRI/', help='for test seg')
         self.parser.add_argument('--test_img_list_file', type=str, default='./preprocess/MRI_SEG/PROC/MRI/test_MRI.txt', help='test image list file')
+        self.parser.add_argument('--test_seg_output_dir', type=str, default='./Output/MRI/experiment_apada2seg/', help='save test segmentation output results')
+
+        self.initialized = True
+
+    def parse(self):
+        if not self.initialized:
+            self.initialize()
+        self.opt = self.parser.parse_args()
+        self.opt.isTrain = self.isTrain   # train or test
+
+        str_ids = self.op
