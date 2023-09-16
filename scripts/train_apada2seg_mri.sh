@@ -19,4 +19,5 @@ python main.py \
 --seg_norm DiceNorm \
 --lambda_cc 0.1 \
 --lambda_mind 0.1 \
---checkpoint
+--checkpoints_dir ./Checkpoints/MRI/ \
+--display_id 0
