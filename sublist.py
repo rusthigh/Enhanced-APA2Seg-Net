@@ -28,4 +28,17 @@ def dir2list(path, sub_list_file):
         subs.sort()
         for sub in subs:
             sub_dir = os.path.join(img_root_dir,sub)
-            views = os.listdir(sub
+            views = os.listdir(sub_dir)
+            views.sort()
+            for view in views:
+                view_dir = os.path.join(sub_dir,view)
+                slices = os.listdir(view_dir)
+                slices.sort()
+                for slice in slices:
+                    line = os.path.join(view_dir,slice)
+                    fp.write(line + "\n")
+        fp.close()
+
+
+def equal_length_two_list(list_A, list_B):
+    if
