@@ -41,4 +41,12 @@ def dir2list(path, sub_list_file):
 
 
 def equal_length_two_list(list_A, list_B):
-    if
+    if len(list_A)<len(list_B):
+        diff = len(list_B)-len(list_A)
+        for i in range(diff):
+            list_A.append(list_A[i])   # bug? -> list_A.append(list_B[i])
+    else:
+        diff = len(list_A)-len(list_B)
+        for i in range(diff):
+            list_B.append(list_B[i])
+    return list_A, list_B
