@@ -53,4 +53,18 @@ class GetData(object):
             print("{0}: {1}".format(i, o))
         choice = input("\nPlease enter the number of the "
                        "dataset above you wish to download:")
-        return options[int(choi
+        return options[int(choice)]
+
+    def _download_data(self, dataset_url, save_path):
+        if not isdir(save_path):
+            os.makedirs(save_path)
+
+        base = basename(dataset_url)
+        temp_save_path = join(save_path, base)
+
+        with open(temp_save_path, "wb") as f:
+            r = requests.get(dataset_url)
+            f.write(r.content)
+
+        if base.endswith('.tar.gz'):
+            obj = tarfile.open(temp_sav
