@@ -42,4 +42,15 @@ class GetData(object):
     def _get_options(r):
         soup = BeautifulSoup(r.text, 'lxml')
         options = [h.text for h in soup.find_all('a', href=True)
-                   if h.text.endswith(('.
+                   if h.text.endswith(('.zip', 'tar.gz'))]
+        return options
+
+    def _present_options(self):
+        r = requests.get(self.url)
+        options = self._get_options(r)
+        print('Options:\n')
+        for i, o in enumerate(options):
+            print("{0}: {1}".format(i, o))
+        choice = input("\nPlease enter the number of the "
+                       "dataset above you wish to download:")
+        return options[int(choi
