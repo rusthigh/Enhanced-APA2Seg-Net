@@ -29,4 +29,17 @@ class GetData(object):
     def __init__(self, technique='cyclegan', verbose=True):
         url_dict = {
             'pix2pix': 'https://people.eecs.berkeley.edu/~tinghuiz/projects/pix2pix/datasets',
-            'cyclegan': 'https://people.eecs.berkeley.edu/~taesung_par
+            'cyclegan': 'https://people.eecs.berkeley.edu/~taesung_park/CycleGAN/datasets'
+        }
+        self.url = url_dict.get(technique.lower())
+        self._verbose = verbose
+
+    def _print(self, text):
+        if self._verbose:
+            print(text)
+
+    @staticmethod
+    def _get_options(r):
+        soup = BeautifulSoup(r.text, 'lxml')
+        options = [h.text for h in soup.find_all('a', href=True)
+                   if h.text.endswith(('.
