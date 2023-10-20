@@ -67,4 +67,22 @@ class GetData(object):
             f.write(r.content)
 
         if base.endswith('.tar.gz'):
-            obj = tarfile.open(temp_sav
+            obj = tarfile.open(temp_save_path)
+        elif base.endswith('.zip'):
+            obj = ZipFile(temp_save_path, 'r')
+        else:
+            raise ValueError("Unknown File Type: {0}.".format(base))
+
+        self._print("Unpacking Data...")
+        obj.extractall(save_path)
+        obj.close()
+        os.remove(temp_save_path)
+
+    def get(self, save_path, dataset=None):
+        """
+
+        Download a dataset.
+
+        Args:
+            save_path : str
+              
