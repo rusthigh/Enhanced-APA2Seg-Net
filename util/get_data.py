@@ -94,4 +94,18 @@ class GetData(object):
 
         Returns:
             save_path_full : str
-                The absolute path to the downloaded da
+                The absolute path to the downloaded data.
+
+        """
+        if dataset is None:
+            selected_dataset = self._present_options()
+        else:
+            selected_dataset = dataset
+
+        save_path_full = join(save_path, selected_dataset.split('.')[0])
+
+        if isdir(save_path_full):
+            warn("\n'{0}' already exists. Voiding Download.".format(
+                save_path_full))
+        else:
+ 
