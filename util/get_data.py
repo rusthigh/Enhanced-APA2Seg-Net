@@ -108,4 +108,8 @@ class GetData(object):
             warn("\n'{0}' already exists. Voiding Download.".format(
                 save_path_full))
         else:
- 
+            self._print('Downloading Data...')
+            url = "{0}/{1}".format(self.url, selected_dataset)
+            self._download_data(url, save_path=save_path)
+
+        return abspath(save_path_full)
