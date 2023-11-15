@@ -56,4 +56,9 @@ if __name__ == '__main__':
     ims = []
     txts = []
     links = []
- 
+    for n in range(4):
+        ims.append('image_%d.png' % n)
+        txts.append('text_%d' % n)
+        links.append('image_%d.png' % n)
+    html.add_images(ims, txts, links)
+    html.save()
