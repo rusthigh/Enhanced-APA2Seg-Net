@@ -38,4 +38,22 @@ class HTML:
                     with td(style="word-wrap: break-word;", halign="center", valign="top"):
                         with p():
                             with a(href=os.path.join('images', link)):
-                                img(style="width:%dpx" % width, src=os.path.join('imag
+                                img(style="width:%dpx" % width, src=os.path.join('images', im))
+                            br()
+                            p(txt)
+
+    def save(self):
+        html_file = '%s/index.html' % self.web_dir
+        f = open(html_file, 'wt')
+        f.write(self.doc.render())
+        f.close()
+
+
+if __name__ == '__main__':
+    html = HTML('web/', 'test_html')
+    html.add_header('hello world')
+
+    ims = []
+    txts = []
+    links = []
+ 
