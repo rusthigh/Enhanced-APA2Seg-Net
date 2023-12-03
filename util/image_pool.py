@@ -29,3 +29,6 @@ class ImagePool():
                     self.images[random_id] = image
                     return_images.append(tmp)
                 else:
+                    return_images.append(image)
+        return_images = Variable(torch.cat(return_images, 0))
+        return return_images
