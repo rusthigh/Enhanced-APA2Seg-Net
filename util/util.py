@@ -28,4 +28,21 @@ def diagnose_network(net, name='network'):
     count = 0
     for param in net.parameters():
         if param.grad is not None:
-            mean += torch.mean(torch.abs(param.grad.da
+            mean += torch.mean(torch.abs(param.grad.data))
+            count += 1
+    if count > 0:
+        mean = mean / count
+    print(name)
+    print(mean)
+
+
+def save_image(image_numpy, image_path):
+    if (len(image_numpy.shape)>2):
+        image_pil = Image.fromarray(image_numpy[:,:,0])
+    else:
+        image_pil = Image.fromarray(image_numpy)
+    image_pil.save(image_path)
+
+
+def info(object, spacing=10, collapse=1):
+    ""
