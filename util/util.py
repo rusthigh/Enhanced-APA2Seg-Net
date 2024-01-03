@@ -77,3 +77,9 @@ def mkdirs(paths):
         for path in paths:
             mkdir(path)
     else:
+        mkdir(paths)
+
+
+def mkdir(path):
+    if not os.path.exists(path):
+        os.makedirs(path)
