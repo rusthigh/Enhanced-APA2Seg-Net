@@ -21,3 +21,25 @@ If you use this code for your research or project, please cite:
     }
 
 
+### Environment and Dependencies
+Requirements:
+* Python 3.7
+* Pytorch 1.4.0
+* scipy
+* scikit-image
+* pillow
+* itertools
+
+Our code has been tested with Python 3.7, Pytorch 1.4.0, CUDA 10.0 on Ubuntu 18.04.
+
+
+### Dataset Setup
+ ....... 
+
+### To Run Our Code
+- Train the model
+```bash
+python main.py \
+--name experiment_apada2seg \
+--raw_A_dir ./preprocess/MRI_SEG/PROC/DCT/ \
+--raw_A_seg_dir ./preproc
