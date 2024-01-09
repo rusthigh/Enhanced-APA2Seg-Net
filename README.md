@@ -42,4 +42,15 @@ Our code has been tested with Python 3.7, Pytorch 1.4.0, CUDA 10.0 on Ubuntu 18.
 python main.py \
 --name experiment_apada2seg \
 --raw_A_dir ./preprocess/MRI_SEG/PROC/DCT/ \
---raw_A_seg_dir ./preproc
+--raw_A_seg_dir ./preprocess/MRI_SEG/PROC/DCT/ ......... 
+
+### Registration based on APA2Seg-Net
+Please refer to the Yale BioImage Suite (Command Line Version) for implementation of our registeration pipeline.
+[[BIS Link](https://bioimagesuiteweb.github.io/bisweb-manual/CommandLineTools.html)]
+
+
+### Contact 
+If you have any question, please file an issue or contact the new owner:
+```
+rusthigh: contact@rusthigh.com
+```
